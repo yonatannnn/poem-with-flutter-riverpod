@@ -21,11 +21,6 @@ class poemsScreenPage extends ConsumerWidget {
         child: Column(
           children: [
             Profile(),
-            ElevatedButton(
-                onPressed: () {
-                  context.go('/login');
-                },
-                child: Text('Login')),
             SizedBox(height: 20),
             Expanded(child: PoemsScreen()),
           ],
