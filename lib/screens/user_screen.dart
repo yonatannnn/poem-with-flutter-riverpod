@@ -1,15 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../services/poems_provider.dart';
-import '../screens/poem_detail.dart';
+import 'package:p/widgets/profile_widget.dart';
 import '../widgets/poems_list.dart';
 
-class poemsScreen extends ConsumerWidget {
+class poemsScreenPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: PoemsScreen(),
+      appBar: AppBar(
+        title: Text(
+          'Poems',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.blue[900],
+      ),
+      body: Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Profile(),
+            ElevatedButton(
+                onPressed: () {
+                  context.go('/login');
+                },
+                child: Text('Login')),
+            SizedBox(height: 20),
+            Expanded(child: PoemsScreen()),
+          ],
+        ),
+      ),
     );
   }
 }

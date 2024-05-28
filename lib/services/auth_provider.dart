@@ -25,7 +25,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final user = AuthResponse.fromJson(data).user;
-        print('User role: ${user.role}');
         state = AuthState(user: user);
       } else {
         final data = json.decode(response.body);
@@ -38,31 +37,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> login(String email, String password) async {
     final prefs = await SharedPreferences.getInstance();
-    print('Login function called');
     state = AuthState(isLoading: true);
     try {
-      print('inside try block');
       final response = await http.post(
         Uri.parse('http://10.0.2.2:3000/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': email, 'password': password}),
       );
-      print(response.body);
       if (response.statusCode == 200) {
-        print('Response status: ${response.statusCode}');
         final data = json.decode(response.body);
         prefs.setString('token', data['token']);
+        prefs.setString('username', data['user']['username']);
+        prefs.setString('user_email', data['user']['email']);
         final user = AuthResponse.fromJson(data).user;
-        print('User role: ${user.role}');
-        print('user:  ${user}');
-        print('User role: ${user.role}');
-
+        print(user.role);
         state = AuthState(user: user);
         final goRouter = _ref.read(goRouterProvider);
         if (user.role == 'admin') {
           goRouter.go('/adminDashboard');
         } else if (user.role == 'enthusiast') {
-          goRouter.go('/poemScreen', extra: user);
+          goRouter.go('/userScreen', extra: user);
         } else {
           goRouter.go('/');
         }

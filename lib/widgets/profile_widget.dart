@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -8,8 +9,22 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  String userName = 'Y O N A T A N';
-  String picturePath = 'assets/images/backg.jpg';
+  String userName = 'User';
+  String userEmail = 'email';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('username') ?? 'User';
+      userEmail = prefs.getString('user_email') ?? 'email';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +39,25 @@ class _ProfileState extends State<Profile> {
         children: [
           const CircleAvatar(
             radius: 28,
-            backgroundImage: AssetImage('assets/images/backg.jpg'),
+            backgroundColor: Colors.blue,
           ),
           const SizedBox(
             width: 10,
           ),
           Container(
             padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-            child: Text(
-              '$userName',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  userEmail,
+                  style: const TextStyle(color: Colors.black54),
+                ),
+              ],
             ),
           ),
         ],

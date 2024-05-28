@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../services/poems_provider.dart';
-import '../screens/poem_detail.dart';
 import '../widgets/user_poem_widget.dart';
 
 class PoemsScreen extends ConsumerWidget {
@@ -19,7 +17,6 @@ class PoemsScreen extends ConsumerWidget {
                 itemCount: poems.length,
                 itemBuilder: (context, index) {
                   final poem = poems[index];
-                  print(poem);
                   return UserPoemWidget(
                       title: poem['title'],
                       content: poem['content'],

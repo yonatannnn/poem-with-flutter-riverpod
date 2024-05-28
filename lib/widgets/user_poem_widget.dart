@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:p/models/poem_model.dart';
 
 class UserPoemWidget extends StatelessWidget {
   final String title;
@@ -22,10 +25,17 @@ class UserPoemWidget extends StatelessWidget {
           color: Colors.blue[400], borderRadius: BorderRadius.circular(10)),
       child: TextButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/poem-detail', arguments: {
-            'title': title,
-            'content': content,
-          });
+          print('clicked');
+          print('Poem ID: $poemId');
+          context.go(
+            '/poem-detail',
+            extra: Poem(
+                title: title,
+                content: content,
+                author: author,
+                id: poemId,
+                genre: 'General'),
+          );
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.blue[400]!),
@@ -44,25 +54,24 @@ class UserPoemWidget extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ],
                 ),
                 Text(
                   author,
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 15, color: Colors.white),
                 ),
               ],
             ),
             Row(
               children: [
                 IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    size: 40,
-                  ),
-                  onPressed: () {},
-                ),
+                    icon: Icon(
+                      Icons.favorite,
+                      size: 40,
+                    ),
+                    onPressed: () {}),
               ],
             ),
           ],
