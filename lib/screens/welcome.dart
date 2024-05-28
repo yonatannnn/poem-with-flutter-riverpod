@@ -69,7 +69,7 @@ class _WelcomeState extends State<Welcome> with SingleTickerProviderStateMixin {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
+              MaterialPageRoute(builder: (context) => LoginScreen()),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -97,9 +97,9 @@ class _WelcomeState extends State<Welcome> with SingleTickerProviderStateMixin {
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            textStyle: const TextStyle(fontSize: 20), // Text style
+            textStyle: const TextStyle(fontSize: 20),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14), // Button border radius
+              borderRadius: BorderRadius.circular(14),
             ),
             elevation: 4,
           ),

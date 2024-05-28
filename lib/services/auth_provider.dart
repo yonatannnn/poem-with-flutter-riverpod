@@ -1,36 +1,82 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'auth_response.dart';
+import 'package:go_router/go_router.dart';
+import '../go_router/go_router.dart';
+import '../models/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-final authProvider = StateNotifierProvider<AuthNotifier, AuthResponse?>((ref) {
-  return AuthNotifier();
-});
+final authProvider =
+    StateNotifierProvider<AuthNotifier, AuthState>((ref) => AuthNotifier(ref));
 
-class AuthNotifier extends StateNotifier<AuthResponse?> {
-  AuthNotifier() : super(null);
+class AuthNotifier extends StateNotifier<AuthState> {
+  AuthNotifier(this._ref) : super(AuthState());
 
-  Future<void> signIn(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('https://yourapi.com/auth/signin'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
+  final Ref _ref;
 
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      state = AuthResponse.fromJson(responseBody);
-    } else {
-      throw Exception('Failed to sign in');
+  Future<void> register(String email, String password) async {
+    state = AuthState(isLoading: true);
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:3000/api/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'password': password}),
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final user = AuthResponse.fromJson(data).user;
+        print('User role: ${user.role}');
+        state = AuthState(user: user);
+      } else {
+        final data = json.decode(response.body);
+        state = AuthState(errorMessage: data['message']);
+      }
+    } catch (e) {
+      state = AuthState(errorMessage: e.toString());
     }
   }
 
-  void signOut() {
-    state = null;
+  Future<void> login(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    print('Login function called');
+    state = AuthState(isLoading: true);
+    try {
+      print('inside try block');
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:3000/api/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'password': password}),
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('Response status: ${response.statusCode}');
+        final data = json.decode(response.body);
+        prefs.setString('token', data['token']);
+        final user = AuthResponse.fromJson(data).user;
+        print('User role: ${user.role}');
+        print('user:  ${user}');
+        print('User role: ${user.role}');
+
+        state = AuthState(user: user);
+        final goRouter = _ref.read(goRouterProvider);
+        if (user.role == 'admin') {
+          goRouter.go('/adminDashboard');
+        } else if (user.role == 'enthusiast') {
+          goRouter.go('/poemScreen', extra: user);
+        } else {
+          goRouter.go('/');
+        }
+      } else {
+        final data = json.decode(response.body);
+        state = AuthState(errorMessage: data['message']);
+      }
+    } catch (e) {
+      print('outside try block');
+      state = AuthState(errorMessage: e.toString());
+    }
+  }
+
+  void logout() {
+    state = AuthState();
   }
 }
