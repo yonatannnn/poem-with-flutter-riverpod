@@ -3,17 +3,24 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommentService {
-  final String baseUrl = 'http://10.0.2.2:3000/api/comments';
+  final String baseUrl;
+  final http.Client client;
+  final SharedPreferences sharedPreferences;
+
+  CommentService({
+    required this.baseUrl,
+    required this.client,
+    required this.sharedPreferences,
+  });
 
   Future<void> postComment(String poemId, String comment) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    String? username = prefs.getString('username');
+    String? token = sharedPreferences.getString('token');
+    String? username = sharedPreferences.getString('username');
     if (token == null) {
       throw Exception('Token not found');
     }
 
-    final response = await http.post(
+    final response = await client.post(
       Uri.parse(baseUrl),
       headers: {
         'Authorization': 'Bearer $token',
@@ -31,14 +38,13 @@ class CommentService {
   }
 
   Future<List<dynamic>> fetchComments(String poemId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    String? token = sharedPreferences.getString('token');
 
     if (token == null) {
       throw Exception('Token not found');
     }
 
-    final response = await http.get(
+    final response = await client.get(
       Uri.parse('$baseUrl/$poemId'),
       headers: {
         'Authorization': 'Bearer $token',

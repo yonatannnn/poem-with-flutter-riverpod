@@ -41,6 +41,7 @@ class FavoriteService {
     }
 
     try {
+      print(baseUrl);
       final response = await http.post(
         Uri.parse(baseUrl),
         headers: {
@@ -50,11 +51,13 @@ class FavoriteService {
         body: jsonEncode({'PoemId': poemId}),
       );
       print(response.statusCode);
+      print(poemId);
       if (response.statusCode != 201) {
-        throw Exception('Failed to add favorite');
+        throw Exception('Failed to add favorite ${response.body}');
       }
     } catch (e) {
       print('Error adding favorite: $e');
+      return;
       throw Exception('Failed to add favorite');
     }
   }

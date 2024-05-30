@@ -9,13 +9,14 @@ class AdminPoemWidget extends ConsumerWidget {
   final String content;
   final String author;
   final String poemId;
+  final VoidCallback onDelete;
 
-  AdminPoemWidget({
-    required this.title,
-    required this.content,
-    required this.author,
-    required this.poemId,
-  });
+  AdminPoemWidget(
+      {required this.title,
+      required this.content,
+      required this.author,
+      required this.poemId,
+      required this.onDelete});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,9 +51,10 @@ class AdminPoemWidget extends ConsumerWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: _deletePoem,
-          ),
+              icon: Icon(Icons.delete),
+              onPressed: () async {
+                onDelete();
+              }),
         ],
       ),
     );

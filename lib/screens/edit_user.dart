@@ -45,7 +45,7 @@ class _AdminEditUserScreenState extends ConsumerState<AdminEditUserScreen> {
         'username': _usernameController.text,
         'role': _roleController.text,
       }).future);
-      refreshUsersProvider(ref);
+      ref.refresh(adminUsersProvider);
       context.go('/adminDashboard');
     } catch (e) {
       print('Failed to save the user: $e');

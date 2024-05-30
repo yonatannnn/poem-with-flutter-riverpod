@@ -25,6 +25,7 @@ class _AdminEditPoemScreenState extends ConsumerState<AdminEditPoemScreen> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   late TextEditingController _authorController;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -42,7 +43,13 @@ class _AdminEditPoemScreenState extends ConsumerState<AdminEditPoemScreen> {
     super.dispose();
   }
 
-  void _savePoem() async {
+  Future<void> _savePoem() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await ref.read(adminEditPoemProvider({
         'poemId': widget.poemId,
@@ -52,11 +59,18 @@ class _AdminEditPoemScreenState extends ConsumerState<AdminEditPoemScreen> {
       }).future);
       refreshPoemsProvider(ref);
       context.go('/adminDashboard');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Poem saved successfully')),
+      );
     } catch (e) {
       print('Failed to save the poem: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to save the poem. Please try again.')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -67,23 +81,44 @@ class _AdminEditPoemScreenState extends ConsumerState<AdminEditPoemScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(
+                labelText: 'Title',
+                hintText: 'Enter the title',
+              ),
             ),
+            SizedBox(height: 12),
             TextField(
               controller: _contentController,
-              decoration: InputDecoration(labelText: 'Content'),
+              decoration: InputDecoration(
+                labelText: 'Content',
+                hintText: 'Enter the content',
+              ),
+              maxLines: 4,
             ),
+            SizedBox(height: 12),
             TextField(
               controller: _authorController,
-              decoration: InputDecoration(labelText: 'Author'),
+              decoration: InputDecoration(
+                labelText: 'Author',
+                hintText: 'Enter the author',
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _savePoem,
-              child: Text('Save'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                elevation: 3,
+              ),
+              child: _isLoading
+                  ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : Text('Save'),
             ),
           ],
         ),

@@ -29,6 +29,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => LoginScreen(),
       ),
       GoRoute(
+        path: '/signup',
+        builder: (context, state) => SignupScreen(),
+      ),
+      GoRoute(
         path: '/login',
         builder: (context, state) => LoginScreen(),
       ),
@@ -71,7 +75,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/user_profile_screen',
         builder: (context, state) => UserProfile(),
       ),
-
       GoRoute(
         path: '/admin/edit_poem',
         builder: (context, state) {

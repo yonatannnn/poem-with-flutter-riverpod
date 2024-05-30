@@ -47,7 +47,7 @@ class PoemDetailScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            Divider(), // Optional: Add a divider before the comment field
+            Divider(), 
             CommentField(poemId: poem.id),
             SizedBox(height: 20),
             Text(

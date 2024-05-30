@@ -40,10 +40,23 @@ class _AddPoemScreenState extends ConsumerState<AddPoemScreen> {
 
       refreshPoemsProvider(ref);
       context.go('/adminDashboard');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Poem saved successfully', style: TextStyle(fontSize: 16)),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
       print('Failed to save the poem: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save the poem. Please try again.')),
+        SnackBar(
+          content: Text('Failed to save the poem. Please try again.',
+              style: TextStyle(fontSize: 16)),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
       );
     }
   }
@@ -51,27 +64,58 @@ class _AddPoemScreenState extends ConsumerState<AddPoemScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Poem')),
-      body: Padding(
+      appBar: AppBar(
+        title: Text('Add Poem'),
+        backgroundColor: Colors.blue[900],
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            TextFormField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(
+                labelText: 'Title',
+                hintText: 'Enter the title',
+                border: OutlineInputBorder(),
+              ),
+              style: TextStyle(fontSize: 18),
             ),
-            TextField(
+            SizedBox(height: 12),
+            TextFormField(
               controller: _contentController,
-              decoration: InputDecoration(labelText: 'Content'),
+              decoration: InputDecoration(
+                labelText: 'Content',
+                hintText: 'Enter the content',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 6,
+              style: TextStyle(fontSize: 16),
             ),
-            TextField(
+            SizedBox(height: 12),
+            TextFormField(
               controller: _authorController,
-              decoration: InputDecoration(labelText: 'Author'),
+              decoration: InputDecoration(
+                labelText: 'Author',
+                hintText: 'Enter the author',
+                border: OutlineInputBorder(),
+              ),
+              style: TextStyle(fontSize: 18),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _savePoem,
-              child: Text('Save'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue[900],
+                elevation: 3,
+                padding: EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: Text(
+                'Save',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ],
         ),

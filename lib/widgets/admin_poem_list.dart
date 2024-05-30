@@ -16,7 +16,7 @@ class AdminPoemsScreen extends ConsumerWidget {
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () {
-              ref.refresh(adminPoemsProvider);
+              ref.refresh(poemsProvider);
             },
           ),
         ],
@@ -33,6 +33,11 @@ class AdminPoemsScreen extends ConsumerWidget {
                     content: poem['content'],
                     author: poem['author'],
                     poemId: poem['_id'],
+                    onDelete: () async {
+                      await ref
+                          .read(adminDeletePoemProvider(poem['_id']).future);
+                      ref.refresh(poemsProvider);
+                    },
                   );
                 },
                 separatorBuilder: (context, index) => Divider(),

@@ -18,28 +18,10 @@ class UserProfile extends ConsumerWidget {
         TextEditingController(text: userProfile.email);
     final TextEditingController _passwordController = TextEditingController();
 
-    Future<void> _updateUserProfile() async {
-      try {
-        await userProfileNotifier.updateUserProfile(
-          _usernameController.text,
-          _emailController.text,
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile updated successfully')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile: $e')),
-        );
-      }
-    }
-
     Future<void> _navigateBasedOnRole() async {
       try {
         final prefs = await SharedPreferences.getInstance();
         final role = prefs.getString('role');
-        print(role);
         if (role == 'poet') {
           context.go('/adminDashboard');
         } else if (role == 'enthusiast') {
@@ -50,9 +32,26 @@ class UserProfile extends ConsumerWidget {
           );
         }
       } catch (e) {
-        print('Failed to get role: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to get role')),
+        );
+      }
+    }
+
+    Future<void> _updateUserProfile() async {
+      try {
+        await userProfileNotifier.updateUserProfile(
+          _usernameController.text,
+          _emailController.text,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile updated successfully')),
+        );
+        _navigateBasedOnRole();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update profile: $e')),
         );
       }
     }
@@ -61,27 +60,48 @@ class UserProfile extends ConsumerWidget {
       appBar: AppBar(
         title: Text('User Profile'),
         backgroundColor: Colors.blue[900],
+        // Optionally add more customization to the AppBar
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.settings),
+        //     onPressed: () {
+        //       // Add settings functionality
+        //     },
+        //   ),
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            IconButton(
-              onPressed: _navigateBasedOnRole,
-              icon: Icon(Icons.arrow_back),
-            ),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(
+                labelText: 'Username',
+                border: OutlineInputBorder(),
+              ),
             ),
+            SizedBox(height: 12),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'New Password'),
+              decoration: InputDecoration(
+                labelText: 'New Password',
+                border: OutlineInputBorder(),
+              ),
               obscureText: true,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _updateUserProfile,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               child: Text('Update Profile'),
             ),
           ],

@@ -53,7 +53,10 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
         onPressed: () {
           context.go('/add_poem');
         },
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         backgroundColor: Colors.blue[900],
       ),
       bottomNavigationBar: BottomNavigationBar(

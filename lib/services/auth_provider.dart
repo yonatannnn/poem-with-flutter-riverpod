@@ -14,18 +14,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   final Ref _ref;
 
-  Future<void> register(String email, String password) async {
+  Future<void> register(String username, String email, String password) async {
+    print('${email} ${password}');
     state = AuthState(isLoading: true);
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.56.1:3000/api/register'),
+        Uri.parse('http://10.0.2.2:3000/api/register'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email, 'password': password}),
+        body: json.encode({
+          'username': username,
+          'email': email,
+          'password': password,
+          'role': 'enthusiast'
+        }),
       );
+      print('${response.statusCode}');
+
       if (response.statusCode == 200) {
+        print('success');
         final data = json.decode(response.body);
         final user = AuthResponse.fromJson(data).user;
         state = AuthState(user: user);
+        final goRouter = _ref.read(goRouterProvider);
+        goRouter.go('/login');
       } else {
         final data = json.decode(response.body);
         state = AuthState(errorMessage: data['message']);
@@ -60,7 +71,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         } else if (user.role == 'enthusiast') {
           goRouter.go('/userScreen', extra: user);
         } else {
-          goRouter.go('/');
+          goRouter.go('/userScreen', extra: user);
         }
       } else {
         final data = json.decode(response.body);

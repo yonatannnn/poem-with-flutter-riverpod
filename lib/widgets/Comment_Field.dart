@@ -11,9 +11,9 @@ class CommentField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _commentController = ref.watch(commentControllerProvider);
-    final commentService = ref.watch(commentServiceProvider);
+    final commentServiceAsyncValue = ref.watch(commentServiceProvider);
 
-    void _postComment() async {
+    void _postComment(CommentService commentService) async {
       String comment = _commentController.text.trim();
       if (comment.isNotEmpty) {
         try {
@@ -23,6 +23,7 @@ class CommentField extends ConsumerWidget {
             duration: Duration(seconds: 2),
           ));
           _commentController.clear();
+          ref.refresh(commentsProvider(poemId));
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Failed to post comment: $e'),
@@ -32,23 +33,29 @@ class CommentField extends ConsumerWidget {
       }
     }
 
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: _commentController,
-            decoration: InputDecoration(
-              hintText: 'Add a comment...',
-              border: OutlineInputBorder(),
+    return commentServiceAsyncValue.when(
+      data: (commentService) {
+        return Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _commentController,
+                decoration: InputDecoration(
+                  hintText: 'Add a comment...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
             ),
-          ),
-        ),
-        SizedBox(width: 10),
-        ElevatedButton(
-          onPressed: _postComment,
-          child: Text('Post'),
-        ),
-      ],
+            SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () => _postComment(commentService),
+              child: Text('Post'),
+            ),
+          ],
+        );
+      },
+      loading: () => CircularProgressIndicator(),
+      error: (error, stack) => Text('Error: $error'),
     );
   }
 }

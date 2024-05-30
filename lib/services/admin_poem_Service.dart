@@ -2,13 +2,23 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminPoemService {
+  final http.Client client;
+  final SharedPreferences sharedPreferences;
+  
+
+  AdminPoemService({
+    required this.client,
+    required this.sharedPreferences,
+  });
   final String baseUrl = 'http://10.0.2.2:3000';
+  
+
   Future<List<Map<String, dynamic>>> getPoems() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    print('inside getPoems');
     final response = await http.get(
       Uri.parse('$baseUrl/api/poems'),
       headers: <String, String>{
