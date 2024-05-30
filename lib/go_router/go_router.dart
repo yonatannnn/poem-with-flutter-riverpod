@@ -12,6 +12,7 @@ import '../screens/welcome.dart';
 import '../models/user_model.dart';
 import '../screens/user_screen.dart';
 import '../screens/poem_detail.dart';
+import '../screens/about.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -19,7 +20,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => poemsScreenPage(),
+        builder: (context, state) => LoginScreen(),
       ),
       GoRoute(
         path: '/login',
@@ -30,6 +31,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => poemsScreenPage(),
       ),
       GoRoute(
+        path: '/about',
+        builder: (context, state) => const About(),
+      ),
+      GoRoute(
         path: '/poem-detail',
         builder: (context, state) {
           final Poem poem = state.extra as Poem;
@@ -37,8 +42,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/favorites',
-        builder: (context, state) => FavouriteScreen(),
+        path: '/favorite_screen',
+        builder: (context, state) => FavoriteScreen(),
       ),
     ],
   );

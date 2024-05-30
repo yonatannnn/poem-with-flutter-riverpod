@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:p/services/favorite_provider.dart';
-import 'package:p/widgets/user_favourite_poem.dart';
-import 'package:p/widgets/user_poem_widget.dart';
-import 'package:p/services/favorite_service.dart';
+import '../widgets/user_favourite_poem.dart';
+import '../services/favorite_provider.dart';
 
-class FavouriteScreen extends ConsumerWidget {
+class FavoriteScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favoritesAsyncValue = ref.watch(favoritesProvider);
+    final favoritesAsyncValue = ref.watch(fetchFavoritesProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorite Poems'),
-        backgroundColor: Colors.blue[900],
+        title: Text('Favorites'),
       ),
       body: favoritesAsyncValue.when(
         data: (favorites) => favorites.isEmpty
@@ -22,7 +19,7 @@ class FavouriteScreen extends ConsumerWidget {
                 itemCount: favorites.length,
                 itemBuilder: (context, index) {
                   final poem = favorites[index];
-                  return UserFavoritePeomWidget(
+                  return UserPoemWidget(
                     title: poem['title'],
                     content: poem['content'],
                     author: poem['author'],

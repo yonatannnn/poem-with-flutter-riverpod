@@ -5,13 +5,13 @@ import 'package:p/models/poem_model.dart';
 import 'package:p/services/favorite_provider.dart';
 import 'package:p/services/favorite_service.dart';
 
-class UserFavoritePeomWidget extends ConsumerWidget {
+class UserPoemWidget extends ConsumerWidget {
   final String title;
   final String content;
   final String author;
   final String poemId;
 
-  const UserFavoritePeomWidget({
+  const UserPoemWidget({
     Key? key,
     required this.title,
     required this.content,
@@ -21,7 +21,15 @@ class UserFavoritePeomWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favoriteService = ref.read(favoriteServiceProvider);
+    final isFavoriteProvider = FutureProvider<bool>((ref) async {
+      final favorites = await ref.read(fetchFavoritesProvider.future);
+      return favorites.any((poem) => poem['_id'] == poemId);
+    });
+
+    final isFavorite = ref.watch(isFavoriteProvider).maybeWhen(
+          data: (data) => data,
+          orElse: () => false,
+        );
 
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 5, 20, 5),
@@ -45,7 +53,8 @@ class UserFavoritePeomWidget extends ConsumerWidget {
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.blue[400]!),
-          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+          padding:
+              MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           alignment: Alignment.centerLeft,
         ),
@@ -68,33 +77,31 @@ class UserFavoritePeomWidget extends ConsumerWidget {
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.favorite, size: 40),
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    size: 40,
+                    color: isFavorite ? Colors.red : Colors.white,
+                  ),
                   onPressed: () async {
                     try {
-                      await favoriteService.addFavorite(poemId);
-    
+                      if (isFavorite) {
+                        await ref
+                            .read(favoriteServiceProvider)
+                            .removeFavorite(poemId);
+                      } else {
+                        await ref
+                            .read(favoriteServiceProvider)
+                            .removeFavorite(poemId);
+                      }
+                      ref.refresh(fetchFavoritesProvider);
+                      ref.refresh(isFavoriteProvider);
                     } catch (e) {
-                      
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Failed to add favorite: $e'),
+                        content: Text('Failed to update favorite: $e'),
                         duration: Duration(seconds: 2),
                       ));
                     }
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.favorite_border, size: 40),
-                  onPressed: () async {
-                    try {
-                      await favoriteService.removeFavorite(poemId);
-                      
-                    } catch (e) {
-                      
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Failed to remove favorite: $e'),
-                        duration: Duration(seconds: 2),
-                      ));
-                    }
+                    print(isFavorite);
                   },
                 ),
               ],

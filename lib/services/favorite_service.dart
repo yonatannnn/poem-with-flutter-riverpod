@@ -13,20 +13,21 @@ class FavoriteService {
       throw Exception('Token not found');
     }
 
-    final response = await http.get(
-      Uri.parse(baseUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-    print('Request URL: $baseUrl');
-    print('Request Headers: ${response.request?.headers}');
-    print('Response Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
+    try {
+      final response = await http.get(
+        Uri.parse(baseUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load favorites');
+      }
+    } catch (e) {
+      print('Error fetching favorites: $e');
       throw Exception('Failed to load favorites');
     }
   }
@@ -34,21 +35,26 @@ class FavoriteService {
   Future<void> addFavorite(String poemId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-
+    print(token);
     if (token == null) {
       throw Exception('Token not found');
     }
 
-    final response = await http.post(
-      Uri.parse(baseUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'PoemId': poemId}),
-    );
-
-    if (response.statusCode != 201) {
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'PoemId': poemId}),
+      );
+      print(response.statusCode);
+      if (response.statusCode != 201) {
+        throw Exception('Failed to add favorite');
+      }
+    } catch (e) {
+      print('Error adding favorite: $e');
       throw Exception('Failed to add favorite');
     }
   }
@@ -61,14 +67,19 @@ class FavoriteService {
       throw Exception('Token not found');
     }
 
-    final response = await http.delete(
-      Uri.parse('$baseUrl/$poemId'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode != 200) {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/$poemId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to remove favorite');
+      }
+      print(response.statusCode);
+    } catch (e) {
+      print('Error removing favorite: $e');
       throw Exception('Failed to remove favorite');
     }
   }
