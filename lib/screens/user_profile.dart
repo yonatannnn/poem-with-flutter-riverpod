@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:p/services/user_profile_provider.dart';
-import '../services/user_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/user_profile_provider.dart';
 
 class UserProfile extends ConsumerWidget {
   const UserProfile({Key? key}) : super(key: key);
@@ -35,6 +35,28 @@ class UserProfile extends ConsumerWidget {
       }
     }
 
+    Future<void> _navigateBasedOnRole() async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final role = prefs.getString('role');
+        print(role);
+        if (role == 'poet') {
+          context.go('/adminDashboard');
+        } else if (role == 'enthusiast') {
+          context.go('/userScreen');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Unknown role')),
+          );
+        }
+      } catch (e) {
+        print('Failed to get role: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to get role')),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('User Profile'),
@@ -45,9 +67,7 @@ class UserProfile extends ConsumerWidget {
         child: Column(
           children: [
             IconButton(
-              onPressed: () {
-                context.go('/userScreen');
-              },
+              onPressed: _navigateBasedOnRole,
               icon: Icon(Icons.arrow_back),
             ),
             TextField(

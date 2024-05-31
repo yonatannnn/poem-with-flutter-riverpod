@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:p/models/poem_model.dart';
+import 'package:p/screens/add_poem.dart';
+import 'package:p/screens/admin_main_page.dart';
+import 'package:p/screens/edit_poem.dart';
 import 'package:p/screens/favorite_screen.dart';
 import 'package:p/screens/user_profile.dart';
 import 'package:p/screens/user_screen.dart';
@@ -14,6 +17,8 @@ import '../models/user_model.dart';
 import '../screens/user_screen.dart';
 import '../screens/poem_detail.dart';
 import '../screens/about.dart';
+import '../screens/edit_user.dart';
+import '../screens/signup.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -26,6 +31,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => LoginScreen(),
+      ),
+      GoRoute(
+        path: '/adminDashboard',
+        builder: (context, state) => AdminDashboardPage(),
+      ),
+      GoRoute(
+        path: '/admin/edit_user',
+        builder: (context, state) {
+          final Map<String, dynamic> userData =
+              state.extra as Map<String, dynamic>;
+          return AdminEditUserScreen(
+            userId: userData['userId'],
+            username: userData['username'],
+            role: userData['role'],
+          );
+        },
       ),
       GoRoute(
         path: '/userScreen',
@@ -50,9 +71,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/user_profile_screen',
         builder: (context, state) => UserProfile(),
       ),
+
       GoRoute(
-        path: '/signup',
-        builder: (context, state) => SignUpScreen(),
+        path: '/admin/edit_poem',
+        builder: (context, state) {
+          final Map<String, dynamic> poemData =
+              state.extra as Map<String, dynamic>;
+          return AdminEditPoemScreen(
+            poemId: poemData['poemId'],
+            title: poemData['title'],
+            content: poemData['content'],
+            author: poemData['author'],
+          );
+        },
+      ),
+      GoRoute(
+        path: '/add_poem',
+        builder: (context, state) => AddPoemScreen(),
       ),
     ],
   );

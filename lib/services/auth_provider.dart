@@ -18,7 +18,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthState(isLoading: true);
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/api/register'),
+        Uri.parse('http://192.168.56.1:3000/api/register'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': email, 'password': password}),
       );
@@ -50,11 +50,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         prefs.setString('username', data['user']['username']);
         prefs.setString('user_id', data['user']['_id']);
         prefs.setString('user_email', data['user']['email']);
+        prefs.setString('role', data['user']['role']);
         final user = AuthResponse.fromJson(data).user;
         print(user.role);
         state = AuthState(user: user);
         final goRouter = _ref.read(goRouterProvider);
-        if (user.role == 'admin') {
+        if (user.role == 'poet') {
           goRouter.go('/adminDashboard');
         } else if (user.role == 'enthusiast') {
           goRouter.go('/userScreen', extra: user);

@@ -8,7 +8,7 @@ class PoemService {
   Future<List<dynamic>> fetchPoems() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-
+    print('token ${token}');
     if (token == null) {
       throw Exception('Token not found');
     }
@@ -19,6 +19,7 @@ class PoemService {
         'Authorization': 'Bearer $token',
       },
     );
+    print(response.statusCode);
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {

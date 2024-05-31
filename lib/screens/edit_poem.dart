@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:p/services/admin_provider.dart';
 import 'package:p/services/poems_provider.dart';
+import '../services/admin_provider.dart';
 
-class AddPoemScreen extends ConsumerStatefulWidget {
+class AdminEditPoemScreen extends ConsumerStatefulWidget {
+  final String poemId;
+  final String title;
+  final String content;
+  final String author;
+
+  AdminEditPoemScreen({
+    required this.poemId,
+    required this.title,
+    required this.content,
+    required this.author,
+  });
+
   @override
-  _AddPoemScreenState createState() => _AddPoemScreenState();
+  _AdminEditPoemScreenState createState() => _AdminEditPoemScreenState();
 }
 
-class _AddPoemScreenState extends ConsumerState<AddPoemScreen> {
+class _AdminEditPoemScreenState extends ConsumerState<AdminEditPoemScreen> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   late TextEditingController _authorController;
@@ -17,9 +29,9 @@ class _AddPoemScreenState extends ConsumerState<AddPoemScreen> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _contentController = TextEditingController();
-    _authorController = TextEditingController();
+    _titleController = TextEditingController(text: widget.title);
+    _contentController = TextEditingController(text: widget.content);
+    _authorController = TextEditingController(text: widget.author);
   }
 
   @override
@@ -32,12 +44,12 @@ class _AddPoemScreenState extends ConsumerState<AddPoemScreen> {
 
   void _savePoem() async {
     try {
-      await ref.read(adminAddPoemProvider({
+      await ref.read(adminEditPoemProvider({
+        'poemId': widget.poemId,
         'title': _titleController.text,
         'content': _contentController.text,
         'author': _authorController.text,
       }).future);
-
       refreshPoemsProvider(ref);
       context.go('/adminDashboard');
     } catch (e) {
@@ -51,7 +63,7 @@ class _AddPoemScreenState extends ConsumerState<AddPoemScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Poem')),
+      appBar: AppBar(title: Text('Edit Poem')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

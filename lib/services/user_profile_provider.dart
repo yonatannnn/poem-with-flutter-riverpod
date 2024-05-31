@@ -5,7 +5,8 @@ import '../services/user_Service.dart';
 
 final userProfileServiceProvider = Provider((ref) => UserProfileService());
 
-final userProfileProvider = StateNotifierProvider<UserProfileNotifier, UserProfile>((ref) {
+final userProfileProvider =
+    StateNotifierProvider<UserProfileNotifier, UserProfile>((ref) {
   return UserProfileNotifier(ref.read(userProfileServiceProvider));
 });
 
@@ -20,7 +21,8 @@ class UserProfile {
 class UserProfileNotifier extends StateNotifier<UserProfile> {
   final UserProfileService _service;
 
-  UserProfileNotifier(this._service) : super(UserProfile(id: '', username: '', email: '')) {
+  UserProfileNotifier(this._service)
+      : super(UserProfile(id: '', username: '', email: '')) {
     _loadUserData();
   }
 
@@ -34,9 +36,12 @@ class UserProfileNotifier extends StateNotifier<UserProfile> {
   }
 
   Future<void> updateUserProfile(String username, String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    print('username $username email $email');
     await _service.updateUserProfile(state.id, username, email);
     state = UserProfile(id: state.id, username: username, email: email);
-    final prefs = await SharedPreferences.getInstance();
+
+    // Update the SharedPreferences after the state is updated
     await prefs.setString('username', username);
     await prefs.setString('user_email', email);
   }

@@ -8,3 +8,7 @@ final poemsProvider = FutureProvider<List<dynamic>>((ref) async {
   final poemService = ref.watch(poemServiceProvider);
   return poemService.fetchPoems();
 });
+
+void refreshPoemsProvider(WidgetRef ref) {
+  ref.refresh(poemsProvider);
+}
