@@ -16,12 +16,14 @@ class MyDrawer extends ConsumerWidget {
         children: [
           userAsyncValue.when(
             data: (userData) => UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(color: Color.fromARGB(255, 127, 16, 196)),
+              decoration:
+                  const BoxDecoration(color: Color.fromARGB(255, 127, 16, 196)),
               accountName: Text(userData['name'] ?? 'User'),
               accountEmail: Text(userData['email'] ?? 'email@example.com'),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => const Center(child: Text('Failed to load user data')),
+            error: (error, stack) =>
+                const Center(child: Text('Failed to load user data')),
           ),
           ListTile(
             leading: const Icon(Icons.info),
@@ -40,8 +42,10 @@ class MyDrawer extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Log out'),
-            onTap: () {
-              Navigator.pushNamed(context, '/welcome');
+            onTap: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.clear(); // Clear all data from SharedPreferences
+              context.go('/login'); // Navigate to the login page
             },
           ),
         ],

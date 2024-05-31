@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:p/models/poem_model.dart';
 import 'package:p/screens/favorite_screen.dart';
+import 'package:p/screens/user_profile.dart';
 import 'package:p/screens/user_screen.dart';
 import 'package:p/widgets/poems_list.dart';
 import 'package:p/widgets/user_favourite_poem.dart';
@@ -44,6 +45,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/favorite_screen',
         builder: (context, state) => FavoriteScreen(),
+      ),
+      GoRoute(
+        path: '/user_profile_screen',
+        builder: (context, state) => UserProfile(),
+      ),
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) => SignUpScreen(),
       ),
     ],
   );

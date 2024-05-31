@@ -48,6 +48,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         final data = json.decode(response.body);
         prefs.setString('token', data['token']);
         prefs.setString('username', data['user']['username']);
+        prefs.setString('user_id', data['user']['_id']);
         prefs.setString('user_email', data['user']['email']);
         final user = AuthResponse.fromJson(data).user;
         print(user.role);
